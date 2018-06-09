@@ -1,0 +1,98 @@
+<html>
+<head>
+    <head>
+        <title>Футбол</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf8"></meta>
+        <link rel="stylesheet" type="text/css"
+              href="https://cdnjs.cloudflare.com/ajax/libs/extjs/4.2.1/resources/css/ext-all.css"/>
+        <script type="text/javascript"
+                src="https://cdnjs.cloudflare.com/ajax/libs/extjs/4.2.1/ext-all.js"></script>
+
+        <script type="text/javascript">
+            Ext.onReady(function () {
+                Ext.create('Ext.container.Viewport', {
+                    layout: {
+                        type: 'vbox',
+                        align: 'center',
+                        pack: 'center'
+                    },
+                    id: 'registerForm',
+                    items: [
+                        {
+                            title: 'Регистрация на футбол',
+                            xtype: 'form',
+                            items: [
+                                {
+                                    xtype: 'textfield',
+                                    name: 'fio',
+                                    fieldLabel: 'ФИО',
+                                    allowBlank: false  // requires a non-empty value
+                                },
+                                {
+                                    xtype: 'textfield',
+                                    name: 'username',
+                                    fieldLabel: 'Логин',
+                                    allowBlank: false  // requires a non-empty value
+                                },
+                                {
+                                    xtype: 'textfield',
+                                    name: 'password',
+                                    fieldLabel: 'Пароль',
+                                    inputType: 'password',
+                                    allowBlank: false  // requires a non-empty value
+                                },
+                                {
+                                    xtype: 'textfield',
+                                    name: 'doublefio',
+                                    fieldLabel: 'doublefio',
+                                    allowBlank: false  // requires a non-empty value
+                                },
+                                {
+                                    xtype: 'textfield',
+                                    name: 'doubleusername',
+                                    fieldLabel: 'doubleusername',
+                                    allowBlank: false  // requires a non-empty value
+                                },
+                                {
+                                    xtype: 'textfield',
+                                    name: 'winner',
+                                    fieldLabel: 'Победитель',
+                                    allowBlank: false  // requires a non-empty value
+                                },
+                            ],
+                            // Reset and Submit buttons
+                            buttons: [{
+                                text: 'Очистить',
+                                handler: function () {
+                                    this.up('form').getForm().reset();
+                                }
+                            }, {
+                                text: 'Зарегистрироваться',
+                                formBind: true, //only enabled once the form is valid
+                                disabled: true,
+                                url: '/registration',
+                                method: 'POST',
+                                handler: function () {
+                                    var form = this.up('form').getForm();
+                                    if (form.isValid()) {
+                                        form.submit({
+                                            success: function (form, action) {
+                                                Ext.Msg.alert('Success', action.result.msg);
+                                            },
+                                            failure: function (form, action) {
+                                                Ext.Msg.alert('Failed', action.result.msg);
+                                            }
+                                        });
+                                    }
+                                }
+                            }]
+                        }
+                    ]
+                });
+            });
+        </script>
+    </head>
+</head>
+<body>
+</body>
+</html>

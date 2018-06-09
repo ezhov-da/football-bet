@@ -1,0 +1,81 @@
+<html>
+<head>
+    <head>
+        <title>Футбол</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf8"></meta>
+        <link rel="stylesheet" type="text/css"
+              href="https://cdnjs.cloudflare.com/ajax/libs/extjs/4.2.1/resources/css/ext-all.css"/>
+        <script type="text/javascript"
+                src="https://cdnjs.cloudflare.com/ajax/libs/extjs/4.2.1/ext-all.js"></script>
+
+        <script type="text/javascript">
+            Ext.onReady(function () {
+                Ext.create('Ext.container.Viewport', {
+                    id: 'authForm',
+                    width: '50%',
+                    layout: {
+                        type: 'vbox',
+                        align: 'center',
+                        pack: 'center'
+                    },
+                    items: [
+                        {
+                            title: 'Авторизация на матчах',
+                            xtype: 'form',
+                            url: '/authorization',
+                            items: [
+                                {
+                                    xtype: 'textfield',
+                                    name: 'username',
+                                    fieldLabel: 'Логин',
+                                    allowBlank: false  // requires a non-empty value
+                                },
+                                {
+                                    xtype: 'textfield',
+                                    name: 'password',
+                                    fieldLabel: 'Пароль',
+                                    inputType: 'password',
+                                    allowBlank: false  // requires a non-empty value
+                                },
+                            ],
+                            // Reset and Submit buttons
+                            buttons: [{
+                                text: 'Очистить',
+                                handler: function () {
+                                    this.up('form').getForm().reset();
+                                }
+                            }, {
+                                text: 'Авторизоваться',
+                                formBind: true, //only enabled once the form is valid
+                                disabled: true,
+                                handler: function () {
+                                    var form = this.up('form').getForm();
+                                    if (form.isValid()) {
+                                        form.submit({
+                                            method: 'POST',
+                                            success: function (form, action) {
+                                                console.log(action);
+                                                Ext.Msg.alert('Success', 'success', function () {
+                                                    window.location.assign(action.response.responseText);
+                                                });
+                                            },
+                                            failure: function (form, action) {
+                                                console.log(action);
+                                                Ext.Msg.alert('failure', 'failure', function () {
+                                                    window.location.assign(action.response.responseText);
+                                                });
+                                            }
+                                        });
+                                    }
+                                }
+                            }]
+                        }
+                    ]
+                });
+            });
+        </script>
+    </head>
+</head>
+<body>
+</body>
+</html>

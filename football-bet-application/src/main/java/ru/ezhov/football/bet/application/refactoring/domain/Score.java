@@ -40,8 +40,7 @@ public class Score {
                                          "Select userstrana1 " +
                                                  "from AZ_DEV.dbo.T_E_football_userSchet " +
                                                  "where username='" + doubleUsername + "' and idmatcha = '" + gameId + "'");) {
-
-                        while (rs.next()) {
+                        if (rs.next()) {
                             throw new ScoreException("Вы уже вносили счет по указанной игре!");
                         }
                     }
@@ -59,16 +58,6 @@ public class Score {
             if (one < 0 || two < 0)
                 throw new ScoreException("Айяяй, что за счет [" + one + " : " + one + " ], внеси корректный!");
 
-            //Этот код будет проверять время внесения, если время меньше 9:00 и больше 18:00, тогда бэньг!
-            Date timeFirst = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").parse(
-                    new SimpleDateFormat("dd.MM.yyyy").format(new Date()) + " 9:00:00");
-            Date timeLast = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").parse(
-                    new SimpleDateFormat("dd.MM.yyyy").format(new Date()) + " 18:00:00");
-            Date timeNow = new Date();
-
-            if (timeFirst.compareTo(timeNow) > 0 || timeLast.compareTo(timeNow) < 0)
-                throw new ScoreException("Ая яй, как не хорошо вносить счет не по времени =)");
-
             try (Connection connection = dataSource.getConnection()) {
                 try (Statement st = connection.createStatement();) {
                     try (ResultSet rs =
@@ -76,8 +65,7 @@ public class Score {
                                          "Select idmatcha " +
                                                  "from AZ_DEV.dbo.T_E_football_itogschet " +
                                                  "where idmatcha = '" + gameId + "'");) {
-
-                        while (rs.next()) {
+                        if (rs.next()) {
                             throw new ScoreException("Вы уже вносили счет по указанной игре!");
                         }
                     }

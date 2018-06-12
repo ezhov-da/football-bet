@@ -2,6 +2,8 @@ package ru.ezhov.football.bet.server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.ezhov.football.bet.application.refactoring.infrastructure.AdminLoadException;
+import ru.ezhov.football.bet.application.refactoring.infrastructure.AdminService;
 import ru.ezhov.football.bet.server.controllers.GetControllerAuthorization;
 import ru.ezhov.football.bet.server.controllers.GetControllerComboBoxAllGames;
 import ru.ezhov.football.bet.server.controllers.GetControllerComboBoxGames;
@@ -31,22 +33,29 @@ public class App {
     public static final Logger LOG = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) {
-        port(50121);
-        Spark.staticFiles.location("/staticFiles");
-        before(new AuthorizationFilter());
-        get("/", new GetControllerIndex());
-        get("/logout", new GetControllerLogout());
-        get("/comboBoxPlayers", new GetControllerComboBoxPlayers());
-        get("/comboBoxGames", new GetControllerComboBoxGames());
-        get("/allComboBoxGames", new GetControllerComboBoxAllGames());
-        post("/registerScore", new PostControllerRegisterScore());
-        post("/registerScoreGame", new PostControllerRegisterGameScore());
-        get("/gameResult", new GetControllerGameResult());
-        get("/finalResult", new GetControllerFinalResult());
-        get("/forecast", new GetControllerForecast());
-        get("/registration", new GetControllerRegistration());
-        post("/registration", new PostControllerRegistration());
-        get("/authorization", new GetControllerAuthorization());
-        post("/authorization", new PostControllerAuthorization());
+        try {
+            AdminService.load();
+
+            port(50121);
+
+            Spark.staticFiles.location("/staticFiles");
+            before(new AuthorizationFilter());
+            get("/", new GetControllerIndex());
+            get("/logout", new GetControllerLogout());
+            get("/comboBoxPlayers", new GetControllerComboBoxPlayers());
+            get("/comboBoxGames", new GetControllerComboBoxGames());
+            get("/allComboBoxGames", new GetControllerComboBoxAllGames());
+            post("/registerScore", new PostControllerRegisterScore());
+            post("/registerScoreGame", new PostControllerRegisterGameScore());
+            get("/gameResult", new GetControllerGameResult());
+            get("/finalResult", new GetControllerFinalResult());
+            get("/forecast", new GetControllerForecast());
+            get("/registration", new GetControllerRegistration());
+            post("/registration", new PostControllerRegistration());
+            get("/authorization", new GetControllerAuthorization());
+            post("/authorization", new PostControllerAuthorization());
+        } catch (AdminLoadException e) {
+            e.printStackTrace();
+        }
     }
 }

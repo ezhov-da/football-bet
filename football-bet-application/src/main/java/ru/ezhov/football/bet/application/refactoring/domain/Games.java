@@ -19,4 +19,12 @@ public class Games {
             throw new GamesException(e);
         }
     }
+
+    public List<Game> getGames() throws GamesException {
+        try {
+            return gamesDao.games();
+        } catch (Exception e) {
+            throw new GamesException(e);
+        }
+    }
 }

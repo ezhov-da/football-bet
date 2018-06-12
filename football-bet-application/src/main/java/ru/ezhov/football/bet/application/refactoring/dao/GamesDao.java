@@ -53,4 +53,33 @@ public class GamesDao {
             return games;
         }
     }
+
+    public List<Game> games() throws Exception {
+        String query = "SELECT\n" +
+                "  t0.id,\n" +
+                "  t0.data,\n" +
+                "  t0.gamer\n" +
+                "FROM [dbo].[T_E_football_respisanie] t0\n" +
+                "  LEFT JOIN [dbo].[T_E_football_itogschet] t1 ON t0.id = t1.idmatcha\n" +
+                "WHERE\n" +
+                "  t1.idmatcha IS NULL;";
+        List<Game> games = new ArrayList<>();
+
+        System.out.println("Список всех игр по которым еще нет результатов:\n" + query);
+
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        Game myObject = new Game();
+                        myObject.setId(resultSet.getInt("id"));
+                        myObject.setDate(resultSet.getString("data"));
+                        myObject.setGame(resultSet.getString("gamer"));
+                        games.add(myObject);
+                    }
+                }
+            }
+            return games;
+        }
+    }
 }

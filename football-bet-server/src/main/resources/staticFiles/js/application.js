@@ -323,7 +323,119 @@ var panelGamerInformation = Ext.create('Ext.panel.Panel', {
 });
 
 
-var panelInsertResultGame = Ext.create('Ext.panel.Panel', {});
+// ====================================================
+// Выпадающий список игр
+//====================================================
+Ext.define('AllGamesModel', {
+    extend: 'Ext.data.Model',
+    fields: [
+        {name: 'id', type: 'int'},
+        {name: 'game', type: 'string'},
+    ]
+});
+
+var allGamesStore = Ext.create('Ext.data.Store', {
+    model: 'AllGamesModel',
+    proxy: {
+        type: 'ajax',
+        url: '/allComboBoxGames',
+        reader: {
+            type: 'json',
+            root: 'games'
+        }
+    },
+    autoLoad: true
+});
+
+function reloadComboBoxAllGames() {
+    allGamesStore.reload();
+}
+
+
+var panelInsertResultGame = Ext.create('Ext.form.Panel', {
+    title: 'Форма для внесения результата по игре',
+    layout: 'hbox',
+    items: [
+        Ext.create('Ext.form.field.ComboBox', {
+            fieldLabel: 'На какую игру',
+            queryMode: 'local',
+            store: allGamesStore,
+            valueField: 'id',
+            id: 'comboBoxAllGames',
+            name: 'game',
+            allowBlank: false,
+            tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                '<div class="x-boundlist-item">{game}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                '{game}',
+                '</tpl>'
+            )
+        }),
+        {
+            xtype: 'label',
+            forId: 'myFieldIdAll',
+            text: 'Счет: ',
+            margin: '0 0 0 10'
+        },
+        {
+            xtype: 'textfield',
+            id: 'myFieldIdAll',
+            width: '30',
+            name: 'one',
+            allowBlank: false
+        },
+        {
+            xtype: 'textfield',
+            width: '30',
+            name: 'two',
+            allowBlank: false
+        },
+        {
+            xtype: 'button',
+            text: 'Внести',
+            handler: function () {
+                panelInsertResultGame.getForm().submit({
+                    url: '/registerScoreGame',
+                    method: 'POST',
+                    success: function (form, action) {
+                        console.log(action);
+                        var text = action.response.responseText;
+                        var responseAnswer = Ext.decode(text);
+                        Ext.Msg.alert(
+                            'Все здорово',
+                            responseAnswer.msg
+                        );
+
+                        reloadComboBoxAllGames();
+
+                    },
+                    failure: function (form, action) {
+                        console.log(action);
+                        var text = action.response.responseText;
+                        var responseAnswer = Ext.decode(text);
+                        Ext.Msg.alert(
+                            'Упс, стоп стоп стоп',
+                            responseAnswer.msg
+                        );
+                    },
+                    errors: function (form, action) {
+                        console.log(action);
+                        Ext.Msg.alert(
+                            'Упс, стоп стоп стоп',
+                            'Ошибка сервера'
+                        );
+                    }
+                });
+            }
+        }
+    ]
+
+});
 
 var basicTabPanel =
     Ext.create('Ext.tab.Panel', {
@@ -338,11 +450,8 @@ var basicTabPanel =
             }
         ],
         items: [
-            panelGamerInformation
-            , {
-                title: 'Форма для внесения результата по игре',
-                items: [panelInsertResultGame]
-            }
+            panelGamerInformation,
+            panelInsertResultGame
         ]
     });
 

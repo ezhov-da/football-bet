@@ -7,18 +7,16 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
-public class PostControllerRegisterScore implements Route {
+public class PostControllerRegisterGameScore implements Route {
     @Override
     public Object handle(Request request, Response response) throws Exception {
         response.type("application/json");
-        String player = request.queryParams("player");
         String game = request.queryParams("game");
         String oneCount = request.queryParams("one");
         String twoCount = request.queryParams("two");
 
         JsonObject jsonObject = new JsonObject();
-        if (player == null || "".equals(player)
-                || game == null || "".equals(game) ||
+        if (game == null || "".equals(game) ||
                 oneCount == null || "".equals(oneCount) ||
                 twoCount == null || "".equals(twoCount)) {
             jsonObject.addProperty("failure", true);
@@ -28,7 +26,7 @@ public class PostControllerRegisterScore implements Route {
                 int one = Integer.parseInt(oneCount);
                 int two = Integer.parseInt(twoCount);
                 Score score = new Score();
-                score.addPlayer(player, game, one, two);
+                score.addGame(game, one, two);
                 jsonObject.addProperty("success", true);
                 jsonObject.addProperty("msg", "Данные внесены");
             } catch (ScoreException e) {

@@ -1,0 +1,93 @@
+<html>
+<head>
+    <head>
+        <title>Футбол</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf8"></meta>
+        <link rel="stylesheet" type="text/css"
+              href="https://cdnjs.cloudflare.com/ajax/libs/extjs/4.2.1/resources/css/ext-all.css"/>
+        <script type="text/javascript"
+                src="https://cdnjs.cloudflare.com/ajax/libs/extjs/4.2.1/ext-all.js"></script>
+
+        <script type="text/javascript">
+            var form = Ext.create('Ext.form.Panel', {
+                title: 'Авторизация на матчах',
+                items: [
+                    {
+                        xtype: 'textfield',
+                        name: 'username',
+                        fieldLabel: 'Логин',
+                        allowBlank: false  // requires a non-empty value
+                    },
+                    {
+                        xtype: 'textfield',
+                        name: 'password',
+                        fieldLabel: 'Пароль',
+                        inputType: 'password',
+                        allowBlank: false  // requires a non-empty value
+                    },
+                    {
+                        xtype: 'label',
+                        html: '<a href="/registration">Регистрация</a>'
+                    },
+                ],
+                // Reset and Submit buttons
+                buttons: [{
+                    text: 'Очистить',
+                    handler: function () {
+                        form.reset();
+                    }
+                }, {
+                    text: 'Авторизоваться',
+                    formBind: true, //only enabled once the form is valid
+                    disabled: true,
+                    handler: function () {
+                        if (form.getForm().isValid()) {
+                            form.getForm().submit({
+                                url: '/authorization',
+                                method: 'POST',
+                                success: function (form, action) {
+                                    console.log(action);
+                                    var text = action.response.responseText;
+                                    var responseAnswer = Ext.decode(text);
+                                    window.location.assign(responseAnswer.redirect);
+                                },
+                                failure: function (form, action) {
+                                    console.log(action);
+                                    Ext.Msg.alert(
+                                        'Упс, стоп стоп стоп',
+                                        'Неверный логин или пароль'
+                                    );
+                                },
+                                errors: function (form, action) {
+                                    console.log(action);
+                                    Ext.Msg.alert(
+                                        'Упс, стоп стоп стоп',
+                                        'Неверный логин или пароль'
+                                    );
+                                }
+                            });
+                        }
+                    }
+                }]
+            });
+
+            Ext.onReady(function () {
+                Ext.create('Ext.container.Viewport', {
+                    id: 'authForm',
+                    width: '50%',
+                    layout: {
+                        type: 'vbox',
+                        align: 'center',
+                        pack: 'center'
+                    },
+                    items: [
+                        form
+                    ]
+                });
+            });
+        </script>
+    </head>
+</head>
+<body>
+</body>
+</html>

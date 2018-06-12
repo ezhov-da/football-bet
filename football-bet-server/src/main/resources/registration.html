@@ -25,38 +25,38 @@
                                 {
                                     xtype: 'textfield',
                                     name: 'fio',
-                                    fieldLabel: 'ФИО',
+                                    fieldLabel: 'Ваши ФИО',
                                     allowBlank: false  // requires a non-empty value
                                 },
                                 {
                                     xtype: 'textfield',
                                     name: 'username',
-                                    fieldLabel: 'Логин',
+                                    fieldLabel: 'Ваш Логин',
                                     allowBlank: false  // requires a non-empty value
                                 },
                                 {
                                     xtype: 'textfield',
                                     name: 'password',
-                                    fieldLabel: 'Пароль',
+                                    fieldLabel: 'Ваш Пароль',
                                     inputType: 'password',
                                     allowBlank: false  // requires a non-empty value
                                 },
                                 {
                                     xtype: 'textfield',
                                     name: 'doublefio',
-                                    fieldLabel: 'doublefio',
+                                    fieldLabel: 'ФИО за кого можете вносить',
                                     allowBlank: false  // requires a non-empty value
                                 },
                                 {
                                     xtype: 'textfield',
                                     name: 'doubleusername',
-                                    fieldLabel: 'doubleusername',
+                                    fieldLabel: 'Логин за кого можете вносить',
                                     allowBlank: false  // requires a non-empty value
                                 },
                                 {
                                     xtype: 'textfield',
                                     name: 'winner',
-                                    fieldLabel: 'Победитель',
+                                    fieldLabel: 'Ваш победитель',
                                     allowBlank: false  // requires a non-empty value
                                 },
                             ],
@@ -70,17 +70,30 @@
                                 text: 'Зарегистрироваться',
                                 formBind: true, //only enabled once the form is valid
                                 disabled: true,
-                                url: '/registration',
-                                method: 'POST',
                                 handler: function () {
                                     var form = this.up('form').getForm();
                                     if (form.isValid()) {
                                         form.submit({
+                                            method: 'POST',
+                                            url: '/registration',
                                             success: function (form, action) {
-                                                Ext.Msg.alert('Success', action.result.msg);
+                                                console.log(action);
+                                                var text = action.response.responseText;
+                                                var responseAnswer = Ext.decode(text);
+                                                window.location.assign(responseAnswer.redirect);
                                             },
                                             failure: function (form, action) {
-                                                Ext.Msg.alert('Failed', action.result.msg);
+                                                console.log(action);
+                                                var text = action.response.responseText;
+                                                var responseAnswer = Ext.decode(text);
+                                                Ext.Msg.alert('Упс', responseAnswer.msg);
+                                            },
+                                            errors: function (form, action) {
+                                                console.log(action);
+                                                Ext.Msg.alert(
+                                                    'Упс, стоп стоп стоп',
+                                                    'Неверный логин или пароль'
+                                                );
                                             }
                                         });
                                     }
